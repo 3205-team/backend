@@ -1,0 +1,28 @@
+services:
+  auth:
+    container_name: 'auth-api-service'
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: pnpm run start:dev auth
+    ports:
+      - '38061:3000'
+    volumes:
+      - .:/usr/src/app
+    environment:
+      DATABASE_URI: mongodb://mongodb:27017/sanghun
+      AUTH_PORT: 3000
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - '38062:27017'
+
+  seeding:
+    build: ./seeds
+    depends_on:
+      - mongodb
